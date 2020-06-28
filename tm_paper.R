@@ -1,4 +1,5 @@
 library(tm)
+library(wordnet)
 
 # 01 DATA IMPORT ----------------------------------------------------------
 
@@ -71,9 +72,9 @@ reutersAcq <- tm_map(reutersAcq, stemDocument)
 
 # create a index to filter after
 
-idx <- meta(reutersCrude, "id") == '237' & meta(reuters, "heading") == 'INDONESIA SEEN AT CROSSROADS OVER ECONOMIC CHANGE'
+idx <- meta(reutersCrude, "id") == '237' & meta(reutersCrude, "heading") == 'INDONESIA SEEN AT CROSSROADS OVER ECONOMIC CHANGE'
 
-reuters[idx]
+reutersCrude[idx]
 
 # 05 META DATA MANAGEMENT -------------------------------------------------
 
@@ -88,3 +89,34 @@ meta(reutersCrude, type = "corpus")
 meta(reutersCrude, "foo") <- letters[1:20]
 
 meta(reutersCrude)
+
+# 06 DOCUMENT-TERM MATRIX -------------------------------------------------
+
+dtmCrude <- DocumentTermMatrix(reutersCrude)
+
+inspect(dtmCrude)
+
+# Terms that occur at least 5 times
+
+findFreqTerms(dtmCrude, 5)
+
+# find associations with a desire correlation
+
+findAssocs(dtmCrude, "opec", 0.8)
+
+# remove sparse terms
+
+inspect(removeSparseTerms(dtmCrude, 0.4))
+
+# Dictionary
+
+inspect(DocumentTermMatrix(reutersCrude,
+                           list(dictionary = c("prices", "crude", "oil"))))
+
+# 07 SYNONIMOUS -----------------------------------------------------------
+
+synonyms("company", pos = "NOUN")
+
+# Replace all the words to a single synonyms
+
+tm_map()
